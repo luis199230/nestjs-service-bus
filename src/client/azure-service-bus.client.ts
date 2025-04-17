@@ -12,6 +12,9 @@ export class AzureServiceBusClient extends ClientProxy {
   }
 
   async connect(): Promise<any> {
+    if (!this.client) {
+      this.client = new ServiceBusClient(this.options.connectionString);
+    }
     return Promise.resolve();
   }
 
