@@ -4,6 +4,7 @@ import { SB_SUBSCRIBER_METADATA } from "../azure-service-bus.constants";
 import { SbSubscriberMetadata } from "../metadata";
 import {
   MetaOrMetaFactory,
+  SbQueueMetadataOptions,
   SbSubscriptionMetadataOptions,
 } from "../interfaces";
 
@@ -44,3 +45,14 @@ export function Subscription(
     }
   };
 }
+
+export const Queue = (metadata: SbQueueMetadataOptions) => {
+  const data = { ...metadata, topic: metadata.queueName };
+  delete data.queueName;
+  return Subscription({
+    ...data,
+    subscription: null,
+  });
+};
+
+export const Topic = Subscription;
