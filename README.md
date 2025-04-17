@@ -14,7 +14,7 @@
 
 ## Description
 
-<a href="https://azure.microsoft.com/en-us/services/service-bus/#overview" target="_blank">Azure Service Bus</a> is a fully managed enterprise message broker with message queues and publish-subscribe topics (in a namespace). Service Bus is used to decouple applications and services from each other, providing the following benefits:
+<a href="https://azure.microsoft.com/en-us/services/service-bus/#overview" target="_blank">Azure Service Bus</a> is a fully managed enterprise message broker with message queues. Service Bus is used to decouple applications and services from each other, providing the following benefits:
 
 - Load-balancing work across competing workers
 - Safely routing and transferring data and control across service and application boundaries
@@ -25,7 +25,7 @@
 To start building Azure Service Bus-based microservices, first install the required packages:
 
 ```bash
-$ npm i --save @azure/service-bus @niur/nestjs-service-bus
+$ npm i --save @azure/service-bus @madeweb/nestjs-service-bus
 ```
 #### Overview
 
@@ -37,7 +37,7 @@ To use the Azure Service Bus strategy, pass the following options object to the 
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   strategy: new AzureServiceBusServer({
     connectionString: 'Endpoint=sb://<Name>.servicebus.windows.net/;SharedAccessKeyName=<SharedAccessKeyName>;SharedAccessKey=<SharedAccessKey>',
-    options: {}
+    queueName: 'sample-queue',
   }),
 });
 
@@ -162,32 +162,12 @@ Options
 
 <table>
   <tr>
-    <td><code>topic</code></td>
-    <td>Name of the topic for the subscription we want to receive from.</td>
-  </tr>
-  <tr>
-    <td><code>subscription</code></td>
-    <td>Name of the subscription (under the `topic`) that we want to receive from.</td>
-  </tr>
-  <tr>
     <td><code>receiveMode</code></td>
     <td>Represents the receive mode for the receiver. (read more <a href="https://docs.microsoft.com/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock" rel="nofollow" target="_blank">here</a>).</td>
   </tr>
   <tr>
-    <td><code>subQueueType</code></td>
-    <td>Represents the sub queue that is applicable for any queue or subscription. (read more <a href="https://docs.microsoft.com/azure/service-bus-messaging/service-bus-dead-letter-queues" rel="nofollow" target="_blank">here</a>).</td>
-  </tr>
-  <tr>
-    <td><code>maxAutoLockRenewalDurationInMs</code></td>
-    <td>The maximum duration in milliseconds until which the lock on the message will be renewed by the sdk automatically.</td>
-  </tr>
-  <tr>
-    <td><code>skipParsingBodyAsJson</code></td>
-    <td>Option to disable the client from running JSON.parse() on the message body when receiving the message.</td>
-  </tr>
-  <tr>
     <td><code>options</code></td>
-    <td>Options used when subscribing to a Service Bus queue or subscription.</td>
+    <td>Options used when subscribing to a Service Bus queue.</td>
   </tr>
 </table>
 
@@ -195,7 +175,7 @@ Options
 
 ## Stay in touch
 
-* Author - [Niurmiguel](https://github.com/Niurmiguel)
+* Author - [Luis Benavides](https://github.com/luis199230)
 
 ## License
 Nestjs Azure Service Bus is [MIT licensed](LICENSE).
