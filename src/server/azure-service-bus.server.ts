@@ -14,14 +14,12 @@ export class AzureServiceBusStrategy extends Server implements CustomTransportSt
   async listen(callback: () => void) {
     this.client = new ServiceBusClient(this.options.connectionString);
     this.receiver = this.client.createReceiver(this.options.queueName);
-
+   
     this.receiver.subscribe({
       processMessage: async (message) => {
-        console.log('Received message:', message);
-        const handler = this.getHandlerByPattern(this.options.queueName);
-        console.log('Handler:', handler);
+        const handler = this.getHandlerByPattern('AzureServiceBus');
         if (handler) {
-          await handler(message.body);
+          await handler(message.body, this.options.queueName);
         }
       },
       processError: async (args) => {
