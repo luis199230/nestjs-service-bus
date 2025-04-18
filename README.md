@@ -64,98 +64,45 @@ The <strong>Azure Service Bus</strong> strategy exposes the properties described
 #### Client
 
 ```typescript
-@Module({
-  imports: [
-    AzureServiceBusModule.forRoot([
-      {
-        name: 'SB_CLIENT',
-        connectionString: 'Endpoint=sb://<Name>.servicebus.windows.net/;SharedAccessKeyName=<SharedAccessKeyName>;SharedAccessKey=<SharedAccessKey>',
-        options: {},
-      },
-    ]),
-  ]
-  ...
-})
-
-// or
-
-@Module({
-  imports: [
-    AzureServiceBusModule.forRootAsync([
-      {
-        name: 'SB_CLIENT',
-        useFactory: (configService: ConfigService) => ({
-          connectionString: configService.get('connectionString'),
-          options: {}
-        }),
-        inject: [ConfigService],
-      },
-    ]),
-  ]
-  ...
-})
-
-```
-
-```typescript
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AzureServiceBusClient } from '@madeweb/nestjs-service-bus';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
-constructor(
-  @Inject('SB_CLIENT') private readonly sbClient: AzureServiceBusClientProxy,
-) {}
+export class AnyQueueService {
+  private client: AzureServiceBusClient;
+  private queueName: string;
+
+  constructor(private readonly configService: ConfigService) {
+    this.queueName = this.configService.get<string>(
+      'azureServiceBus.queueName',
+    );
+    this.client = new AzureServiceBusClient(
+      this.configService.get('azureServiceBus'),
+    );
+  }
+
+  public async sendMessage(body: string) {
+    await this.client.connect();
+    await firstValueFrom(this.client.emit(this.queueName, body));
+  }
+}
 
 ```
-
-##### Producer
-
-Event-based
-
-```typescript
-
-const pattern = {
-  name: 'sample-topic', // topic name
-  options: {}
-}; // queue name
-const data = {
-  body: 'Example message'
-};
-
-this.sbClient.send(pattern, data).subscribe((response) => {
-  console.log(response); // reply message
-});
-
-```
-
-Message-based
-
-```typescript
-
-const pattern = {
-  name: 'sample-topic', // topic name
-  options: {}
-}; // queue name
-const data = {
-  body: 'Example message'
-};
-this.sbClient.emit(pattern, data);
-```
-
 
 ##### Consumer
 
-To access the original Azure Service Bus message use the `Subscription` decorator as follows:
+To access the original Azure Service Bus message use the `@MessagePattern` decorator as follows:
 
 
 ```typescript
 
-@Subscription({
-    topic: 'sample-topic',
-    subscription: 'sample-subscription',
-    receiveMode: 'peekLock', // or receiveAndDelete
-  })
-getMessages(@Payload() message: ServiceBusMessage) {
-  console.log(message);
-}
+ @MessagePattern('AzureServiceBus')
+  async handleMessage(@Payload() data: string) {
+    console.log(`Received message: ${data}`);
+  }
+
 ```
 
 Options
@@ -173,7 +120,7 @@ Options
 
 
 
-## Stay in touch
+## Security concerns and contributions
 
 * Author - [Luis Benavides](https://github.com/luis199230)
 
