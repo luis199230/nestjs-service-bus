@@ -7,9 +7,9 @@
 
   <p align="center"><a href="https://nestjs.com" target="_blank">NestJs</a> custom transport for <a href="https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview" target="_blank">Azure Service Bus</a>.</p>
     <p align="center">
-<a href="https://www.npmjs.com/~niur" target="_blank"><img src="https://img.shields.io/npm/v/@niur/nestjs-service-bus.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~niur" target="_blank"><img src="https://img.shields.io/npm/l/@niur/nestjs-service-bus.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~niur" target="_blank"><img src="https://img.shields.io/npm/dm/@niur/nestjs-service-bus.svg" alt="NPM Downloads" /></a>
+<a href="https://www.npmjs.com/~luis199230" target="_blank"><img src="https://img.shields.io/npm/v/@madeweb/nestjs-service-bus.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~luis199230" target="_blank"><img src="https://img.shields.io/npm/l/@madeweb/nestjs-service-bus.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~luis199230" target="_blank"><img src="https://img.shields.io/npm/dm/@madeweb/nestjs-service-bus.svg" alt="NPM Downloads" /></a>
 </p>
 
 ## Description
@@ -61,7 +61,29 @@ The <strong>Azure Service Bus</strong> strategy exposes the properties described
   </tr>
 </table>
 
-#### Client
+
+#### Usage
+
+Add the following code to your main.ts file:
+
+```typescript
+async function bootstrapAzureServiceBus(app: INestApplication): Promise<void> {
+  const serviceBusConnection = process.env.AZURE_SERVICE_BUS_CONNECTION;
+
+  if (serviceBusConnection) {
+    app.connectMicroservice<CustomStrategy>({
+      strategy: new AzureServiceBusStrategy({
+        connectionString: serviceBusConnection,
+        queueName: process.env.AZURE_SERVICE_BUS_DOWNLOAD_QUEUE,
+      }),
+    });
+
+    await app.startAllMicroservices();
+  }
+}
+```
+
+#### Producer
 
 ```typescript
 import { Injectable } from '@nestjs/common';
