@@ -17,7 +17,7 @@ export class AzureServiceBusStrategy extends Server implements CustomTransportSt
    
     this.receiver.subscribe({
       processMessage: async (message) => {
-        const handler = this.getHandlerByPattern('AzureServiceBus');
+        const handler = this.getHandlerByPattern(this.options.queueName);
         if (handler) {
           await handler(message.body, this.options.queueName);
         }
