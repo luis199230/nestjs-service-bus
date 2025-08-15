@@ -120,7 +120,7 @@ To access the original Azure Service Bus message use the `@MessagePattern` decor
 
 ```typescript
 
- @MessagePattern('AzureServiceBus')
+ @MessagePattern('{queueNameFromEnv}')
   async handleMessage(@Payload() data: string) {
     console.log(`Received message: ${data}`);
   }
